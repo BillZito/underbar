@@ -52,6 +52,7 @@
     //if array, use for i less than collection's length to run func on each
     if (Array.isArray(collection)){
       for (var i = 0; i < collection.length; i++){
+        //can pass i and collection through to let functions access them
         iterator(collection[i], i, collection);
       }
     } else {
@@ -72,6 +73,7 @@
     var result = -1;
 
     _.each(array, function(item, index) {
+      //result ===-1 checks to make sure that a target hasn't been found yet
       if (item === target && result === -1) {
         result = index;
       }
@@ -81,17 +83,40 @@
   };
 
   // Return all elements of an array that pass a truth test.
+  //one way to do this: use each to call it on each item in collection and push
+  //the ones that pass to the new array before returning it
   _.filter = function(collection, test) {
+    var ans = [];
+    _.each(collection, function(item){
+      if (test(item)){
+        ans.push(item);
+      }
+    });
+    return ans;
   };
 
   // Return all elements of an array that don't pass a truth test.
+  //this is the opposite of filter. one idea: filter based on 
+  //not passing the test
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    return _.filter(collection, function(item){
+      return test(item) === false;
+    });
   };
 
   // Produce a duplicate-free version of the array.
+  //use each to check if in array and return if not
   _.uniq = function(array) {
+    var ans = [];
+    //
+    _.each(array, function(item){
+      if (_.indexOf(ans, item) == -1){
+        ans.push(item);
+      }
+    });
+    return ans;
   };
 
 
