@@ -7,6 +7,7 @@
   // seem very useful, but remember it--if a function needs to provide an
   // iterator when the user does not pass one in, this will be handy.
   _.identity = function(val) {
+    return val;
   };
 
   /**
@@ -30,6 +31,8 @@
 
   // Return an array of the first n elements of an array. If n is undefined,
   // return just the first element.
+  //bill's comments: ternary operator to check if n is undefined--if is, just 
+  //returns first value. if isn't, returns up to n element 
   _.first = function(array, n) {
     return n === undefined ? array[0] : array.slice(0, n);
   };
@@ -37,6 +40,7 @@
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
+    return n === undefined ? array[array.length-1] : array.slice(Math.max(array.length-n, 0), array.length);
   };
 
   // Call iterator(value, key, collection) for each element of collection.
