@@ -1,8 +1,6 @@
 (function() {
   'use strict';
 
-//i didn't change anything but want to make sure this works
-//i still didn't change a thing
   var checkForNativeMethods = function(runUnderbarFunction) {
     it('should not use the native version of any underbar methods in its implementation', function() {
       // These spies are set up in testSupport.js
