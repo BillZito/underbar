@@ -263,36 +263,53 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
+//for every property in additional arg objects, set argument[0]'s values to
+//the ones in the following objects
   _.extend = function(obj){
-    //for every argument in object, set argument[0]'s values to the ones in the following
+    
+    //figure out arg length to iterate through args
     var argLength = arguments.length;
-    //console.log(arguments[0], arguments[1], arguments[2]);
-    if (argLength < 2 || obj == null){ 
-      return obj; 
-    }
-    var ans = {};
-    for (var i = 0; i < argLength; i++){
-      //console.log("made it", i, argLength);
+    
+    //set the answer intiially to arguments[0];
+    var ans = arguments[0];
+    
+    //for each additional argument, run through all the keys
+    for (var i = 1; i < argLength; i++){
+      //for all values, set ans[key] val to the argument[i's] key val
       for (var key in arguments[i]){
-        //console.log("second for!", key);
         ans[key] = arguments[i][key];
-        //console.log(key, ans);
-        //console.log(arguments[0][key], arguments[i][key], i, key);
       }
     }
-    if (!(key in ans)){
-      return arguments[0];
-    } else{
-      //console.log(ans);
-      return ans;
-    }
-    
+    //return ans
+    return ans;
   };
 
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
+  //for each argument in obj, if there isn't already a value, write it.
   _.defaults = function(obj) {
+    //set val of arglenth to iteratre through others
+    var argLength = arguments.length;
+
+    //set ans to first arg obj
+    var ans = arguments[0];
+
+    //for each arg after first, iterate through all keys
+    for (var i = 1; i < argLength; i++){
+      //for each key in arg[i], check if already in ans, and if not, set
+      //to new val
+      for (var key in arguments[i]){
+        //first check if key not in ans;
+        if (!(key in ans)){
+          //set to new val if not in
+          ans[key] = arguments[i][key];
+        }
+      }
+    }
+    //return ans;
+    return ans;
+
   };
 
 
