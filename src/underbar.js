@@ -381,7 +381,7 @@
                 }
               }
           } else if (!(arguments[i] == pastArgs[i])){
-            console.log(arguments[i], pastArgs[i]);
+            //console.log(arguments[i], pastArgs[i]);
             //set same args to false
             sameArgs = false;
           }
@@ -408,6 +408,22 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    //create args array of all arguments after wait
+    var args = []; 
+    for (var i = 2; i < arguments.length; i++){
+         args.push(arguments[i]);
+    }
+    
+    //initialize result var to be new function
+    var result;
+    setTimeout(function(){
+      //apply this and the args after wait to the function and return it
+      result = func.apply(this, args);
+      return result;
+
+      //set wait time
+    }, wait);
+
   };
 
 
@@ -422,6 +438,8 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    //slice into many different arrays and then join them together
+    //
   };
 
 
