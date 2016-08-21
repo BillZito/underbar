@@ -246,7 +246,7 @@
 
       //if no iterator, test each item in collection
       if (iterator === undefined){
-        return Boolean(item);
+        return _.identity(item);
       }
 
       //return truthiness of each item
@@ -256,23 +256,18 @@
     }, true);
   };
 
-  // Determine whether any of the elements pass a truth test. If no iterator is
-  // provided, provide a default one
-  _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
-    //in future, try running every with OR for next value
-    return _.reduce(collection, function(anyTrue, item){
-      if (anyTrue){
-        return true;
-      }
-      if (iterator === undefined){
-        return Boolean(item);
-      }
-      return Boolean(iterator(item));
-    }, false);
-    
-  };
+//some should determine if any elements pass the 
+//test, and provide default test if none provided
+_.some = function(collection, iterator){
+  //if no iterator, set it to identity
+  iterator || (iterator = _.identity);
 
+  //use every to iterate over collection
+  //use anonymous function to take in the element 
+  return !(_.every(collection, function(item){
+    return !(iterator(item));
+  }));
+};
 
   /**
    * OBJECTS
@@ -384,7 +379,7 @@
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  _.memoize = function(func) {
+  _.memoize2 = function(func) {
     //using closure, these will only be called once...
     var alreadyCalledArgs = false;
     var result;
@@ -435,6 +430,28 @@
     };
   };
 
+
+  //
+  //takes a function and runs it if different args
+_.memoize = function(func) {
+  
+  //create empty object
+  var ans = {};
+
+  //return function
+  return function(){
+    var arg = JSON.stringify(arguments);
+    console.log(arg);
+    if (!(ans[arg])){
+      ans[arg] = func.apply(this, arguments);
+    }
+    return ans[arg];
+  };
+
+};
+//see if this gives different results for same function with different args
+
+//
   /*
   //tried but didn't get it to work again
   _.memoize = function(func){
@@ -492,21 +509,21 @@
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
-  _.shuffle = function(arr) {
-    //initialize new array as copy of given array
-    var ans = arr.slice(0);
+_.shuffle = function(array) {
+  var copy = array.slice();
+  return copy.sort(function() {
+    //console.log(Math.floor(Math.random()*10));
+    return Math.floor(Math.random()*10);
+  });
+};
 
-    //sort by a random number so that arr is sufficiently scrambled
-    ans.sort(function(a, b){
-      return Math.random(-10, 10);
-    });
-    
-    //return sorted answers
-    return ans;
-    
-  };
-
-
+//var test = [1, 2, 3, 4, 5];
+//var ans = _.shuffle(test);
+//var ans2 = _.shuffle(test2);
+//_.shuffle([1, 2, 6, 3, 4, 9]);
+//[9, 4, 3, 6, 2, 1]
+//_.shuffle([2, 6, 3, 4, 1, 9]);
+//[9, 1, 4, 3, 6, 2]
   /**
    * ADVANCED
    * =================
