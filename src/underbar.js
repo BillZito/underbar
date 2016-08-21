@@ -178,16 +178,47 @@
   //can also do this recursively
   _.reduce = function(collection, iterator, accumulator) {
     if (accumulator == undefined){
+      //if acculumator undefined, set it to the first val and make copy of array w/out first val
       var accumulator = collection[0];
+      
+      //does this slice change the array itself? 
       collection = collection.slice(1, collection.length);
     }
 
+    //for each item in collection, accumulator = new value.
     _.each(collection, function(item){
       accumulator = iterator(accumulator, item);
     });
 
+    //return summed val
     return accumulator; 
   };
+
+  //reduce recursive--only works for strings, so breaks contains method below if used
+  _.reduceRec = function(collection, iterator, accumulator){
+    
+    //if accumulator undefined, set first val to accumulator and make copy of 
+    //collection without first val
+    if (accumulator == undefined){
+      var accumulator = collection[0];
+      collection = collection.slice(1);
+    }
+
+    //base case: array is empty, return accumulator
+    if (collection.length === 0){
+      return accumulator;
+    } else{
+      //t is computed by iterator. If undefined, set to accumulator, otherwise do nothing
+      var t = iterator(accumulator, collection[0]);
+      t != undefined? accumulator = t: null;
+
+      //make copy of collection without first value and run reduceRec again. 
+      collection = collection.slice(1);
+      accumulator = _.reduceRec(collection, iterator, accumulator);
+      //return at end to make sure right value has been passed along
+      return accumulator;
+    }
+  }
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
@@ -229,8 +260,6 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
-    //basically run every except default false and change to true if any true
-
     //in future, try running every with OR for next value
     return _.reduce(collection, function(anyTrue, item){
       if (anyTrue){
@@ -363,23 +392,28 @@
 
     return function() {
       //not using closure, so these will be called always...
+      //var sameArgs = pastArgs == undefined? false: true;
+
+      //if ! past args, make same args false
       var sameArgs = true;
       if (pastArgs ==undefined){
-        //console.log('test');
         sameArgs = false;
       } else {
 
         for (var i = 0; i < arguments.length; i++){
-          //don't know if I can call func like that...
-          if (pastArgs[i] == undefined){
-            //console.log('here');
-            sameArgs = false;
-          } else if (Array.isArray(arguments[i])){
+          //for eaach arg, if pastArgs of that val is undefined, same args false
+          //if (pastArgs[i] == undefined){
+           // sameArgs = false;
+            //if it's an array
+          if (Array.isArray(arguments[i])){
+            //foreach item in the array
               for (var j=0; j< arguments[i].length; j++){
+                //if the items in array are not the items in past args, same args false
                 if (!(arguments[i][j] == pastArgs[i][j])){
                   sameArgs = false;
                 }
               }
+              //if the arg is not the same as past args, same args false
           } else if (!(arguments[i] == pastArgs[i])){
             //console.log(arguments[i], pastArgs[i]);
             //set same args to false
@@ -400,6 +434,27 @@
       return result;
     };
   };
+
+  /*
+  //tried but didn't get it to work again
+  _.memoize = function(func){
+    //why do i need this? 
+    var alreadyCalledArgs = false;
+    var result; 
+    var pastArgs;
+
+    return function(){
+      //every doesn't make sense here because past args[item] doesn't make sense
+      sameArgs = _.every(arguments, function(item, pastArgs){return item = pastArgs[item];}, true);
+      if (!alreadyCalledArgs || !sameArgs){
+        result = func.apply(this, arguments);
+        pastArgs = arguments; 
+        alreadyCalledArgs = true; 
+      }
+      return result;
+    }
+  }
+  */
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
