@@ -370,7 +370,6 @@ _.some = function(collection, iterator){
       return result;
     };
   };
-
   // Memorize an expensive function's results by storing them. You may assume
   // that the function only takes primitives as arguments.
   // memoize could be renamed to oncePerUniqueArgumentList; memoize does the
@@ -441,17 +440,18 @@ _.memoize = function(func) {
   //return function
   return function(){
     var arg = JSON.stringify(arguments);
-    console.log(arg);
-    if (!(ans[arg])){
+    //console.log(arg);
+    //console.log(arg);
+    if (!ans[arg]){
       ans[arg] = func.apply(this, arguments);
     }
     return ans[arg];
   };
 
 };
+
 //see if this gives different results for same function with different args
 
-//
   /*
   //tried but didn't get it to work again
   _.memoize = function(func){
@@ -490,9 +490,7 @@ _.memoize = function(func) {
     var result;
     setTimeout(function(){
       //apply this and the args after wait to the function and return it
-      result = func.apply(this, args);
-      return result;
-
+      return func.apply(this, args);
       //set wait time
     }, wait);
 
@@ -512,18 +510,12 @@ _.memoize = function(func) {
 _.shuffle = function(array) {
   var copy = array.slice();
   return copy.sort(function() {
-    //console.log(Math.floor(Math.random()*10));
-    return Math.floor(Math.random()*10);
+    //sort by random number
+    return Math.floor((Math.random()*100)-50);
   });
 };
 
-//var test = [1, 2, 3, 4, 5];
-//var ans = _.shuffle(test);
-//var ans2 = _.shuffle(test2);
-//_.shuffle([1, 2, 6, 3, 4, 9]);
-//[9, 4, 3, 6, 2, 1]
-//_.shuffle([2, 6, 3, 4, 1, 9]);
-//[9, 1, 4, 3, 6, 2]
+
   /**
    * ADVANCED
    * =================
@@ -534,7 +526,12 @@ _.shuffle = function(array) {
 
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
-  _.invoke = function(collection, functionOrKey, args) {
+  _.invoke = function(collection, functionOrKey, args){
+    var ans = [];
+    for (var i =0; i< collection.length; i++){
+       ans.push(functionOrKey.apply(collection[i], args));
+    }
+    return ans;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
