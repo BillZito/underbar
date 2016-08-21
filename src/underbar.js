@@ -487,7 +487,7 @@ _.memoize = function(func) {
     }
     
     //initialize result var to be new function
-    var result;
+    //var result;
     setTimeout(function(){
       //apply this and the args after wait to the function and return it
       return func.apply(this, args);
@@ -546,7 +546,39 @@ _.shuffle = function(array) {
   //
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
-  _.zip = function() {
+   _.zip = function() {
+  var result = [];
+
+  //determine the max length of longest array
+  var max = arguments[0].length;
+  for (var a = 1; a < arguments.length; a++){
+    if (arguments[a].length > max){
+      max = arguments[a].length;
+    }
+  }
+  //the index of the argument is the same as the index within the
+  //individual arrays
+
+  //iterate through all arguments
+  for (var i = 0; i< arguments.length; i++){
+    var argIndex = arguments[i];
+
+    //iterate through all items in each argument
+    for (var j = 0; j < max; j++){
+      var elemIndex = j;
+      if (i = 0){
+        result[0] = [argument[0]];
+
+      } else{
+
+      //push those items to result
+      console.log(result[i], arguments[j]);
+      result[i].push(arguments[j]);
+      }
+    }
+  }
+
+  return result;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -554,6 +586,22 @@ _.shuffle = function(array) {
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    if(result === undefined) {
+    var result = []
+    }
+
+    if (nestedArray.length === 0) {
+      return result;
+    } else if (!Array.isArray(nestedArray[0])) {
+      result.push(nestedArray[0])
+      nestedArray.shift();
+    } else {
+    _.flatten(nestedArray[0],result)
+      nestedArray.shift();
+    }
+
+    return _.flatten(nestedArray,result);
+  
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
