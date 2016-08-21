@@ -336,7 +336,10 @@
       if (!alreadyCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
         // infromation from one function call to another.
+        //if not already called, result is the original function .apply (this, arguments)
+        //to give it all the original information
         result = func.apply(this, arguments);
+        //set already called to true so that it will not run again in future
         alreadyCalled = true;
       }
       // The new function always returns the originally computed result.
@@ -353,6 +356,49 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //using closure, these will only be called once...
+    var alreadyCalledArgs = false;
+    var result;
+    var pastArgs;
+
+    return function() {
+      //not using closure, so these will be called always...
+      var sameArgs = true;
+      if (pastArgs ==undefined){
+        //console.log('test');
+        sameArgs = false;
+      } else {
+
+        for (var i = 0; i < arguments.length; i++){
+          //don't know if I can call func like that...
+          if (pastArgs[i] == undefined){
+            //console.log('here');
+            sameArgs = false;
+          } else if (Array.isArray(arguments[i])){
+              for (var j=0; j< arguments[i].length; j++){
+                if (!(arguments[i][j] == pastArgs[i][j])){
+                  sameArgs = false;
+                }
+              }
+          } else if (!(arguments[i] == pastArgs[i])){
+            console.log(arguments[i], pastArgs[i]);
+            //set same args to false
+            sameArgs = false;
+          }
+        }
+      }
+      //if arg hasn't been called or args haven't been used, set to new func
+      if (!alreadyCalledArgs || !sameArgs) {
+        //need to check it it has been called on those args
+
+        result = func.apply(this, arguments);
+        pastArgs = arguments;
+        alreadyCalledArgs = true;
+      }
+
+      //return result
+      return result;
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
