@@ -263,8 +263,32 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
+  _.extend = function(obj){
+    //for every argument in object, set argument[0]'s values to the ones in the following
+    var argLength = arguments.length;
+    //console.log(arguments[0], arguments[1], arguments[2]);
+    if (argLength < 2 || obj == null){ 
+      return obj; 
+    }
+    var ans = {};
+    for (var i = 0; i < argLength; i++){
+      //console.log("made it", i, argLength);
+      for (var key in arguments[i]){
+        //console.log("second for!", key);
+        ans[key] = arguments[i][key];
+        //console.log(key, ans);
+        //console.log(arguments[0][key], arguments[i][key], i, key);
+      }
+    }
+    if (!(key in ans)){
+      return arguments[0];
+    } else{
+      //console.log(ans);
+      return ans;
+    }
+    
   };
+
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
