@@ -194,6 +194,8 @@
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
     return _.reduce(collection, function(wasFound, item) {
+      //runs a reduce function starting with false, and returning if the item ===target or if 
+      //ever returned true, keep returning true
       if (wasFound) {
         return true;
       }
@@ -205,12 +207,41 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(allTrue, item){
+      //if one value has returned false, return false
+      if (!allTrue){
+        return false;
+      }
+
+      //if no iterator, test each item in collection
+      if (iterator === undefined){
+        return Boolean(item);
+      }
+
+      //return truthiness of each item
+      return Boolean(iterator(item));
+
+      //default true
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    //basically run every except default false and change to true if any true
+
+    //in future, try running every with OR for next value
+    return _.reduce(collection, function(anyTrue, item){
+      if (anyTrue){
+        return true;
+      }
+      if (iterator === undefined){
+        return Boolean(item);
+      }
+      return Boolean(iterator(item));
+    }, false);
+    
   };
 
 
