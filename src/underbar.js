@@ -437,9 +437,18 @@
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
-  _.shuffle = function(array) {
-    //slice into many different arrays and then join them together
-    //
+  _.shuffle = function(arr) {
+    //initialize new array as copy of given array
+    var ans = arr.slice(0);
+
+    //sort by a random number so that arr is sufficiently scrambled
+    ans.sort(function(a, b){
+      return Math.random(-10, 10);
+    });
+    
+    //return sorted answers
+    return ans;
+    
   };
 
 
