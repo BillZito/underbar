@@ -547,40 +547,56 @@ _.shuffle = function(array) {
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
    _.zip = function() {
-  var result = [];
+    var result = [];
 
-  //determine the max length of longest array
-  var max = arguments[0].length;
-  for (var a = 1; a < arguments.length; a++){
-    if (arguments[a].length > max){
-      max = arguments[a].length;
+     //determine the max length of longest array
+     var max = arguments[0].length;
+     for (var a = 1; a < arguments.length; a++){
+       if (arguments[a].length > max){
+         max = arguments[a].length;
+       }
+     }
+    
+    for (var b = 0; b < max; b++){
+      result.push([]);
     }
-  }
-  //the index of the argument is the same as the index within the
-  //individual arrays
+    //the index of the argument is the same as the index within the
+    //individual arrays
 
-  //iterate through all arguments
-  for (var i = 0; i< arguments.length; i++){
-    var argIndex = arguments[i];
+    //iterate through all arguments
+     for (var i = 0; i < arguments.length; i++){
+       var argIndex = i;
 
-    //iterate through all items in each argument
-    for (var j = 0; j < max; j++){
-      var elemIndex = j;
-      if (i = 0){
-        result[0] = [argument[0]];
-
-      } else{
-
-      //push those items to result
-      console.log(result[i], arguments[j]);
-      result[i].push(arguments[j]);
+       //iterate through all items in each argument
+       for (var j = 0; j < max; j++){
+         var elemIndex = j;
+         result[argIndex].push(arguments[elemIndex][argIndex]); 
+        }
       }
+
+     return result;
+    };
+
+/*
+#2
+ _.zip = function() {
+  var arr = []
+  var maxLen = arguments[0].length;
+  for (var i = 1; i < arguments.length; i++) {
+    if(arguments[i].length > maxLen) {
+        maxLen = arguments[i].length
     }
   }
-
-  return result;
-  };
-
+    for(var i =0; i < maxLen; i++) {
+      var newArr = []   
+      for(var j =0; j < maxLen;j++) {
+        newArr.push(arguments[j][i])
+      }
+      arr.push(newArr);
+    }
+    return arr;
+}
+*/
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
   //
@@ -607,6 +623,20 @@ _.shuffle = function(array) {
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    
+    var result = [];  
+    var args = arguments[0];  
+    for(var i = 1; i < arguments.length; i++) {
+      for(var j = 0; j < arguments.length; j++) {    
+        if(_.contains(arguments[i], args[j]) === true) {
+          result.push(args[j]);
+          }
+        }
+          
+      }
+    
+    return result;
+    
   };
 
   // Take the difference between one array and a number of other arrays.
