@@ -378,6 +378,7 @@ _.some = function(collection, iterator){
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+  /*
   _.memoize2 = function(func) {
     //using closure, these will only be called once...
     var alreadyCalledArgs = false;
@@ -428,7 +429,7 @@ _.some = function(collection, iterator){
       return result;
     };
   };
-
+  */
 
   //
   //takes a function and runs it if different args
@@ -539,6 +540,9 @@ _.shuffle = function(array) {
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    return collection.sort(function(item){
+      iterator(item);
+    });
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -642,7 +646,48 @@ _.shuffle = function(array) {
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    
+    //var result = _.difference([1, 2, 3, 4], [2, 30, 40], [1, 11, 111]);
+    //[3, 4]
+    var start = arguments[0];
+    var result = [];
+    //iterate through args
+    for (var i = 1; i < arguments.length; i++){
+      for (var j = 0; j < start.length ; j++){
+        if (_.contains(arguments[i], start[j]) === true){
+          start[j] = false;
+        }
+
+      }
+    }
+  
+  for (var a = 0; a < start.length; a++){
+    if (typeof start[a] !== 'boolean'){
+    result.push(start[a]);
+    }
+  }
+
+  return result;
+
+
   };
+
+/*
+  _.difference = function(array) {
+    var start = arguments[0];
+    var result = [];
+    var args = [];
+    for (var i = 1; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    if !(_.some(args, function(item) {
+      return _.contains(args, item);
+    }) {
+      result.push()
+    }
+
+  };
+*/
 
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.  See the Underbar readme for extra details
