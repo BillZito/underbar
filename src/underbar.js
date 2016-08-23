@@ -106,6 +106,7 @@
     });
   };
 
+
   // Produce a duplicate-free version of the array.
   //use each to check if in array and return if not
   _.uniq = function(array) {
@@ -291,21 +292,15 @@ _.some = function(collection, iterator){
 //the ones in the following objects
   _.extend = function(obj){
     
-    //figure out arg length to iterate through args
-    var argLength = arguments.length;
-    
-    //set the answer intiially to arguments[0];
-    var ans = arguments[0];
-    
-    //for each additional argument, run through all the keys
-    for (var i = 1; i < argLength; i++){
-      //for all values, set ans[key] val to the argument[i's] key val
-      for (var key in arguments[i]){
-        ans[key] = arguments[i][key];
+    //use array.prototype to slice args, and iterate through all excep tifrst
+    _.each(Array.prototype.slice.call(arguments, 1), function(arg){
+      //for each key in each argument, set object's key val to that arg's key val
+      for (var key in arg){
+        obj[key] = arg[key];
       }
-    }
-    //return ans
-    return ans;
+    });
+    //return obj;
+    return obj;
   };
 
 
@@ -378,101 +373,24 @@ _.some = function(collection, iterator){
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  /*
-  _.memoize2 = function(func) {
-    //using closure, these will only be called once...
-    var alreadyCalledArgs = false;
-    var result;
-    var pastArgs;
 
-    return function() {
-      //not using closure, so these will be called always...
-      //var sameArgs = pastArgs == undefined? false: true;
+    //takes a function and runs it if different args
+  _.memoize = function(func) {
+    
+    //create empty object
+    var ans = {};
 
-      //if ! past args, make same args false
-      var sameArgs = true;
-      if (pastArgs ==undefined){
-        sameArgs = false;
-      } else {
-
-        for (var i = 0; i < arguments.length; i++){
-          //for eaach arg, if pastArgs of that val is undefined, same args false
-          //if (pastArgs[i] == undefined){
-           // sameArgs = false;
-            //if it's an array
-          if (Array.isArray(arguments[i])){
-            //foreach item in the array
-              for (var j=0; j< arguments[i].length; j++){
-                //if the items in array are not the items in past args, same args false
-                if (!(arguments[i][j] == pastArgs[i][j])){
-                  sameArgs = false;
-                }
-              }
-              //if the arg is not the same as past args, same args false
-          } else if (!(arguments[i] == pastArgs[i])){
-            //console.log(arguments[i], pastArgs[i]);
-            //set same args to false
-            sameArgs = false;
-          }
-        }
-      }
-      //if arg hasn't been called or args haven't been used, set to new func
-      if (!alreadyCalledArgs || !sameArgs) {
-        //need to check it it has been called on those args
-
-        result = func.apply(this, arguments);
-        pastArgs = arguments;
-        alreadyCalledArgs = true;
-      }
-
-      //return result
-      return result;
-    };
-  };
-  */
-
-  //
-  //takes a function and runs it if different args
-_.memoize = function(func) {
-  
-  //create empty object
-  var ans = {};
-
-  //return function
-  return function(){
-    var arg = JSON.stringify(arguments);
-    //console.log(arg);
-    //console.log(arg);
-    if (!ans[arg]){
-      ans[arg] = func.apply(this, arguments);
-    }
-    return ans[arg];
-  };
-
-};
-
-//see if this gives different results for same function with different args
-
-  /*
-  //tried but didn't get it to work again
-  _.memoize = function(func){
-    //why do i need this? 
-    var alreadyCalledArgs = false;
-    var result; 
-    var pastArgs;
-
+    //return function
     return function(){
-      //every doesn't make sense here because past args[item] doesn't make sense
-      sameArgs = _.every(arguments, function(item, pastArgs){return item = pastArgs[item];}, true);
-      if (!alreadyCalledArgs || !sameArgs){
-        result = func.apply(this, arguments);
-        pastArgs = arguments; 
-        alreadyCalledArgs = true; 
+      var arg = JSON.stringify(arguments);
+
+      if (!ans[arg]){
+        ans[arg] = func.apply(this, arguments);
       }
-      return result;
-    }
-  }
-  */
+      return ans[arg];
+    };
+
+  };
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -529,8 +447,14 @@ _.shuffle = function(array) {
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args){
     var ans = [];
-    for (var i =0; i< collection.length; i++){
-       ans.push(functionOrKey.apply(collection[i], args));
+    if (typeof functionOrKey === "string"){
+      for (var i = 0; i < collection.length; i++){
+        ans.push(collection[i][functionOrKey]());
+      }
+    } else {
+      for (var i =0; i< collection.length; i++){
+         ans.push(functionOrKey.apply(collection[i], args));
+      }
     }
     return ans;
   };
@@ -542,7 +466,6 @@ _.shuffle = function(array) {
   _.sortBy = function(collection, iterator) {
     var result = collection.slice();
 
-    if (typeof iterator === "string"){
       //check min iteratively to check where it is and add to front
       //do this until reach end of all items
       //this goes through all items in collection
@@ -551,55 +474,30 @@ _.shuffle = function(array) {
         var min = Infinity;
         //this for loop goes through all values in collection, and sets min to right val
         for (var i = 0; i < result.length-j; i++){
-
+          if (typeof iterator === "string"){
           //if it is smaller than the min, set to min
-          if (result[i][iterator] < min){
-            min = result[i][iterator];
-            minIndex = i;
+            if (result[i][iterator] < min){
+              min = result[i][iterator];
+              minIndex = i;
+            }
+          } else {
+            //if undefined, set next to 99999, otherwise set it to iterator(result[i])
+            var next = iterator(result[i])===undefined? 999999: iterator(result[i]);
+            
+            if (next < min){
+              min = next;
+              minIndex = i;
+            }
           }
         }
-
         //push in the new min
         result.push(result[minIndex]);
         //take out old value from result
         result.splice(minIndex, 1);
       }
       return result;
-
-    } else {
-      //for each i in collection, run function(collection(i)) and compare same way as above
-        for (var j = 0; j < result.length; j++){
-          var minIndex = j;
-          var min = Infinity;
-        //this for loop goes through all values in collection, and sets min to right val
-          for (var i = 0; i < result.length-j; i++){
-            var placeholder;
-          //if it is smaller than the min, set to min
-            if (iterator(result[i]) === undefined){
-              placeholder = 99999999999;
-            } 
-            placeholder || (placeholder = iterator(result[i]));
-            console.log(result, placeholder, min, minIndex);
-
-            if (placeholder < min){
-              min = placeholder;
-              minIndex = i;
-            }
-          }
-
-          //push in the new min
-          result.push(result[minIndex]);
-          //take out old value from result
-          result.splice(minIndex, 1);
-      }
-      return result;
-    }
   };
 
-//   var people = [{name: 'curly', age: 50}, {name: 'moe', age: 30}];
-//        people = _.sortBy(people, function(person) {
- //         return person.age;
- //       });
   // Zip together two or more arrays with elements of the same index
   // going together.
   //
