@@ -540,11 +540,66 @@ _.shuffle = function(array) {
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
-    return collection.sort(function(item){
-      iterator(item);
-    });
+    var result = collection.slice();
+
+    if (typeof iterator === "string"){
+      //check min iteratively to check where it is and add to front
+      //do this until reach end of all items
+      //this goes through all items in collection
+      for (var j = 0; j < result.length; j++){
+        var minIndex = j;
+        var min = Infinity;
+        //this for loop goes through all values in collection, and sets min to right val
+        for (var i = 0; i < result.length-j; i++){
+
+          //if it is smaller than the min, set to min
+          if (result[i][iterator] < min){
+            min = result[i][iterator];
+            minIndex = i;
+          }
+        }
+
+        //push in the new min
+        result.push(result[minIndex]);
+        //take out old value from result
+        result.splice(minIndex, 1);
+      }
+      return result;
+
+    } else {
+      //for each i in collection, run function(collection(i)) and compare same way as above
+        for (var j = 0; j < result.length; j++){
+          var minIndex = j;
+          var min = Infinity;
+        //this for loop goes through all values in collection, and sets min to right val
+          for (var i = 0; i < result.length-j; i++){
+            var placeholder;
+          //if it is smaller than the min, set to min
+            if (iterator(result[i]) === undefined){
+              placeholder = 99999999999;
+            } 
+            placeholder || (placeholder = iterator(result[i]));
+            console.log(result, placeholder, min, minIndex);
+
+            if (placeholder < min){
+              min = placeholder;
+              minIndex = i;
+            }
+          }
+
+          //push in the new min
+          result.push(result[minIndex]);
+          //take out old value from result
+          result.splice(minIndex, 1);
+      }
+      return result;
+    }
   };
 
+//   var people = [{name: 'curly', age: 50}, {name: 'moe', age: 30}];
+//        people = _.sortBy(people, function(person) {
+ //         return person.age;
+ //       });
   // Zip together two or more arrays with elements of the same index
   // going together.
   //
