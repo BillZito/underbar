@@ -239,36 +239,23 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-    return _.reduce(collection, function(allTrue, item){
-      //if one value has returned false, return false
-      if (!allTrue){
-        return false;
-      }
-
-      //if no iterator, test each item in collection
-      if (iterator === undefined){
-        return _.identity(item);
-      }
-
-      //return truthiness of each item
-      return Boolean(iterator(item));
-
-      //default true
+    return _.reduce(collection, function(a, b){
+      return iterator === undefined? a && _.identity(b): 
+                                    a && Boolean(iterator(b));
     }, true);
-  };
+  }
 
 //some should determine if any elements pass the 
 //test, and provide default test if none provided
 _.some = function(collection, iterator){
-  //if no iterator, set it to identity
   iterator || (iterator = _.identity);
 
-  //use every to iterate over collection
-  //use anonymous function to take in the element 
-  return !(_.every(collection, function(item){
-    return !(iterator(item));
-  }));
-};
+  //if every iterator shows that all not false, return true
+  //if every iterator shows that all false, return false
+  return !_.every(collection, function(item){
+    return !iterator(item);
+  });
+}
 
   /**
    * OBJECTS
@@ -504,56 +491,24 @@ _.shuffle = function(array) {
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
    _.zip = function() {
-    var result = [];
+     //determine the max length of longest array--could use reduce as well
+     var max = _.reduce(arguments, function(a, b){return b.length>a? b.length:a;}, 0);
+     //create empty array in each spot of max arg's length
+     var result = [];
+     for (var i =0; i < max; i++)result.push([]);
+     console.log(result);
 
-     //determine the max length of longest array
-     var max = arguments[0].length;
-     for (var a = 1; a < arguments.length; a++){
-       if (arguments[a].length > max){
-         max = arguments[a].length;
-       }
-     }
-    
-    for (var b = 0; b < max; b++){
-      result.push([]);
-    }
-    //the index of the argument is the same as the index within the
-    //individual arrays
-
-    //iterate through all arguments
-     for (var i = 0; i < arguments.length; i++){
-       var argIndex = i;
-
-       //iterate through all items in each argument
-       for (var j = 0; j < max; j++){
-         var elemIndex = j;
-         result[argIndex].push(arguments[elemIndex][argIndex]); 
+     //for each argument, for each item in element in arg, push at the result's elemIndex the arg's element
+     _.each(arguments, function(arg){
+        //start at 0 (mo, larry curly)
+        for (var j = 0; j < max; j++){
+          var elemIndex = j;
+          result[elemIndex].push(arg[elemIndex]);
         }
-      }
-
+     });
      return result;
     };
 
-/*
-#2
- _.zip = function() {
-  var arr = []
-  var maxLen = arguments[0].length;
-  for (var i = 1; i < arguments.length; i++) {
-    if(arguments[i].length > maxLen) {
-        maxLen = arguments[i].length
-    }
-  }
-    for(var i =0; i < maxLen; i++) {
-      var newArr = []   
-      for(var j =0; j < maxLen;j++) {
-        newArr.push(arguments[j][i])
-      }
-      arr.push(newArr);
-    }
-    return arr;
-}
-*/
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
   //
